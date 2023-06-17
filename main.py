@@ -74,7 +74,7 @@ def home(event : Event):
     return user_data_list
 
 @app.get('/getid')
-def getId(id):
+def getId():
     x= id
     return x
 
