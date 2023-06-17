@@ -73,5 +73,10 @@ def home(event : Event):
     # dataS.append([data])
     return user_data_list
 
+@app.get('/getid')
+def getId(id):
+    x= id
+    return x
+
    
     
