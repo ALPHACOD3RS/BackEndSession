@@ -5,7 +5,7 @@ class Event(BaseModel):
     categoryId : str
     categoryCode : str
     eventType : str
-    price: str
+    price: float
     brand : str
     eventTime : str
     userId : str
