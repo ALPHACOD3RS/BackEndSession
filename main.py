@@ -71,12 +71,9 @@ def home(event : Event):
     # data = event
     user_data_list.append(event)
     # dataS.append([data])
-    return user_data_list
+    return {"data":user_data_list}
 
 @app.get('/getid')
 def getId():
     x= id
     return x
-
-   
-    
