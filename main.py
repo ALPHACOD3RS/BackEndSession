@@ -1,79 +1,121 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+import pandas as pd
+from preprocessing import preprocessing
 from schema import Event
+import database, model, schema
+from database import SessionLocal, engine
+from sqlalchemy.orm import Session
+# import cudf
+
 
 
 
 app = FastAPI()
 
+model.Base.metadata.create_all(bind=engine)
 
-id = [1000894,1000978,1001588,1001605,1001606,1001618,1001619,1001820,]
-
-
-
-
-
-
-
-
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+id = [100035477,
+100035478,
+100035479,
+100035482,
+100035483,
+100035485,
+100035486,
+100035487,
+100035488,
+100035490,
+100035493,
+100035494,
+100035496,
+4100242,
+4100243,
+4100244,
+4100245,
+4100248,
+4100249,
+4100250,
+4100251,
+4100252,
+4100253,
+4100254,
+4100255,
+4100256,
+4100257,
+4100258,
+4100259,
+4100260,
+4100261,
+4100263,
+4100265,
+4100266,
+4100268,
+4100271,
+4100275,
+4100276,
+4100277,
+4100283,
+4100286,
+4100289,
+4100290,]
 
 
 user_data_list = []
 
+data = {
+    'productId': ['A', 'B', 'C', 'D', 'E'],
+    'categoryId': [1, 2, 3, 4, 5],
+    'categoryCode': ['X', 'Y', 'Z', 'X', 'Y'],
+    'brand': ['Brand A', 'Brand B', 'Brand C', 'Brand A', 'Brand B'],
+    # 'user_id': [587769686, 587769686, 587769686, 587769686, 587769686],
+    'eventType': ['EventType.view', 'EventType.view', 'EventType.view', 'EventType.view', 'EventType.view'],
+    'eventTime': ['2023-01-01 12:00:00', '2023-01-01 12:01:00', '2023-01-02 10:00:00', '2023-01-02 10:02:00', '2023-01-03 15:30:00'],
+    'price': [100, 200, 150, 300, 250],
+    'user_id': [587769686, 587769686, 587769686, 587769686, 587769686],
+    'user_session': ['179879', '179879', '179879', '179879', '179879']
+
+
+
+    # 'user_session': ['179879', '179879', '179879', '179879', '179879']
+    }
 @app.post('/event')
 def home(event : Event):
-    # data = event
-    user_data_list.append(event)
-    # dataS.append([data])
-    return {"data":user_data_list}
+    for key, value in event.dict().items():
+        data[key].append(value)
+
+    # raw_df = cudf.DataFrame(data)
+    # preprocessing(raw_df)
+
+
+
+    return data
 
 @app.get('/getid')
 def getId():
     x= id
     return x
+
+
+
+@app.post('/eventdata')
+def users(request: schema.Event, db: Session = Depends(get_db)):
+    new_user = model.SessionB(productId = request.productId, categoryId = request.categoryId, categoryCode = request.categoryCode, brand = request.brand, eventType = request.eventType, eventTime = request.eventTime, price = request.price )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+@app.get('/geteventdata')
+def getEventData(db: Session = Depends(get_db)):
+    eventData = db.query(model.SessionB).all()
+    return eventData

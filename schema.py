@@ -4,9 +4,10 @@ class Event(BaseModel):
     productId : str
     categoryId : str
     categoryCode : str
-    eventType : str
-    price: float
     brand : str
+    eventType: str
     eventTime : str
-    userId : str
-    userSession : str
+    price : float
+    # userId : str
+    # userSession : str
+
