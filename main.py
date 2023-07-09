@@ -73,21 +73,21 @@ id = [100035477,
 user_data_list = []
 
 data = {
-    'productId': ['A', 'B', 'C', 'D', 'E'],
-    'categoryId': [1, 2, 3, 4, 5],
-    'categoryCode': ['X', 'Y', 'Z', 'X', 'Y'],
-    'brand': ['Brand A', 'Brand B', 'Brand C', 'Brand A', 'Brand B'],
+    'productId': [],
+    'categoryId': [],
+    'categoryCode': [],
+    'brand': [],
     # 'user_id': [587769686, 587769686, 587769686, 587769686, 587769686],
-    'eventType': ['EventType.view', 'EventType.view', 'EventType.view', 'EventType.view', 'EventType.view'],
-    'eventTime': ['2023-01-01 12:00:00', '2023-01-01 12:01:00', '2023-01-02 10:00:00', '2023-01-02 10:02:00', '2023-01-03 15:30:00'],
-    'price': [100, 200, 150, 300, 250],
-    'user_id': [587769686, 587769686, 587769686, 587769686, 587769686],
-    'user_session': ['179879', '179879', '179879', '179879', '179879']
+    'eventType': [],
+    'eventTime': [],
+    'price': [],
+    'user_id': [],
+    'user_session': []
 
 
 
     # 'user_session': ['179879', '179879', '179879', '179879', '179879']
-    }
+    }           
 @app.post('/event')
 def home(event : Event):
     for key, value in event.dict().items():
@@ -96,7 +96,7 @@ def home(event : Event):
     # raw_df = cudf.DataFrame(data)
     # preprocessing(raw_df)
 
-
+    print(data)
 
     return data
 
@@ -109,13 +109,16 @@ def getId():
 
 @app.post('/eventdata')
 def users(request: schema.Event, db: Session = Depends(get_db)):
-    new_user = model.SessionB(productId = request.productId, categoryId = request.categoryId, categoryCode = request.categoryCode, brand = request.brand, eventType = request.eventType, eventTime = request.eventTime, price = request.price )
-    db.add(new_user)
+    new_event = model.SessionB(productId = request.productId, categoryId = request.categoryId, categoryCode = request.categoryCode, brand = request.brand, eventType = request.eventType, eventTime = request.eventTime, price = request.price )
+    
+    db.add(new_event)
     db.commit()
-    db.refresh(new_user)
-    return new_user
+    db.refresh(new_event)
+    print(new_event)
+    return new_event
 
 @app.get('/geteventdata')
 def getEventData(db: Session = Depends(get_db)):
     eventData = db.query(model.SessionB).all()
+    # print(data)
     return eventData
